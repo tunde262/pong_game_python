@@ -2,6 +2,8 @@
 
 A classic **PONG** game built using **Pygame**. Includes 2-player local gameplay, paddle controls, a scoring system, and collision detection. The program also includes optional web hosting support using **asyncio**.
 
+![thumbnail](https://github.com/tunde262/pong_game_python/blob/main/assets/thumbnail.png?raw=true)
+
 ## Features
 - Classic **PONG** gameplay for two players.
 - Smooth paddle and ball movement with realistic collision mechanics.
