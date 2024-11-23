@@ -19,25 +19,25 @@ class Ball:
         pygame.draw.circle( self.screen, self.color, (self.posX, self.posY), self.radius)
 
     def start_moving(self):
-        # # Start the ball's movement.
+        # Start the ball's movement.
         self.dx = 10
         self.dy = 5
 
     def move(self):
-        # # Update the ball's position.
+        # Update the ball's position.
         self.posX += self.dx
         self.posY += self.dy
 
     def paddle_collision(self):
-        # # Reverse the ball's horizontal direction upon hitting a paddle.
+        # Reverse the ball's horizontal direction upon hitting a paddle.
         self.dx = -self.dx
 
     def wall_collision(self):
-        # # Reverse the ball's vertical direction upon hitting a wall.
+        # Reverse the ball's vertical direction upon hitting a wall.
         self.dy = -self.dy
 
     def restart_pos(self):
-        # # Reset the ball to its initial position and stop its movement.
+        # Reset the ball to its initial position and stop its movement.
         self.posX = WIDTH // 2
         self.posY = HEIGHT // 2
         self.dx = 0
@@ -57,18 +57,18 @@ class Paddle:
         self.show()
 
     def show(self):
-        # # Draw the paddle on the screen.
+        # Draw the paddle on the screen.
         pygame.draw.rect( self.screen, self.color, (self.posX, self.posY, self.width, self.height ) )
 
     def move(self):
-        # # Update the paddle's position based on its state.
+        # Update the paddle's position based on its state.
         if self.state == 'up':
             self.posY -= 10
         elif self.state == 'down':
             self.posY += 10
     
     def clamp(self):
-        # # Prevent the paddle from moving beyond the screen boundaries.
+        # Prevent the paddle from moving beyond the screen boundaries.
         if self.posY <= 0:
             self.posY = 0
 
@@ -76,7 +76,7 @@ class Paddle:
             self.posY = HEIGHT - self.height
 
     def restart_pos(self):
-        # # Reset the paddle to its initial position.
+        # Reset the paddle to its initial position.
         self.posY = HEIGHT // 2 - self.height // 2
         self.state = 'stopped'
         self.show()
@@ -93,24 +93,24 @@ class Score:
         self.show()
 
     def show(self):
-        # # Draw the score on the screen.
+        # Draw the score on the screen.
         self.screen.blit( self.label, ( self.posX - self.label.get_rect().width // 2, self.posY ) )
 
     def increase(self):
-        # # Increase the score by 1.
+        # Increase the score by 1.
         points = int(self.points) + 1
         self.points = str(points)
         self.label = self.font.render( self.points, 0, WHITE )
     
     def restart(self):
-        # # Reset the score to 0.
+        # Reset the score to 0.
         self.points = '0'
         self.label = self.font.render( self.points, 0, WHITE )
 
 # CollisionManager class checks for collisions between game objects.
 class CollisionManager:
     def between_ball_and_paddle1(self, ball, paddle1):
-        # # Check if the ball collides with paddle1.
+        # Check if the ball collides with paddle1.
         if ball.posY + ball.radius > paddle1.posY and ball.posY - ball.radius < paddle1.posY + paddle1.height:
             if ball.posX - ball.radius <= paddle1.posX + paddle1.width:
                 return True
@@ -118,7 +118,7 @@ class CollisionManager:
         return False
     
     def between_ball_and_paddle2(self, ball, paddle2):
-        # # Check if the ball collides with paddle2.
+        # Check if the ball collides with paddle2.
         if ball.posY + ball.radius > paddle2.posY and ball.posY - ball.radius < paddle2.posY + paddle2.height:
              if ball.posX + ball.radius >= paddle2.posX:
                 return True
@@ -126,7 +126,7 @@ class CollisionManager:
         return False
 
     def between_ball_and_walls(self, ball):
-        # # Check if the ball collides with the top or bottom walls.
+        # Check if the ball collides with the top or bottom walls.
 
         # top collison
         if ball.posY - ball.radius <= 0:
@@ -139,11 +139,11 @@ class CollisionManager:
         return False
 
     def check_goal_player1(self, ball):
-        # # Check if player1 scores a goal.
+        # Check if player1 scores a goal.
         return ball.posX - ball.radius >= WIDTH
 
     def check_goal_player2(self, ball):
-        # # Check if player2 scores a goal.
+        # Check if player2 scores a goal.
         return ball.posX + ball.radius <= 0
 
 # Game setup
@@ -158,12 +158,12 @@ screen = pygame.display.set_mode( ( WIDTH, HEIGHT ) )   # Initialize the screen
 pygame.display.set_caption( 'PONG' )    # Set the game title
 
 def paint_back():
-    # # Draw the background and the center line.
+    # Draw the background and the center line.
     screen.fill( BLACK )
     pygame.draw.line( screen, WHITE, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT), 5 )
 
 def restart():
-    # # Reset the game to its initial state.
+    # Reset the game to its initial state.
     paint_back()
     score1.restart()
     score2.restart()
@@ -186,7 +186,7 @@ playing = False # Game state
 
 clock = pygame.time.Clock()  # Will be used to Set frame rate
 
-# # Main game loop with asynchronous execution.
+# Main game loop with asynchronous execution.
 async def main(): # Remove 'async' function to run regular python version - for web hosting purposes
     global playing
     
