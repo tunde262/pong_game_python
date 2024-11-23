@@ -1,4 +1,5 @@
 import pygame, sys
+import asyncio  # Set frame rate to 60 frames per second
 
 class Ball:
     def __init__(self, screen, color, posX, posY,radius):
@@ -16,7 +17,7 @@ class Ball:
         pygame.draw.circle( self.screen, self.color, (self.posX, self.posY), self.radius)
 
     def start_moving(self):
-        self.dx = 15
+        self.dx = 10
         self.dy = 5
 
     def move(self):
@@ -159,80 +160,92 @@ score2 = Score( screen, '0', WIDTH - WIDTH // 4, 15 )
 # VARIABLES
 playing = False
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-        
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:
-                ball.start_moving()
-                playing = True
+clock = pygame.time.Clock()  # Will be used to Set frame rate
 
-            if event.key == pygame.K_r:
-                restart()
+async def main(): # -- for web hosting purposes --
+    global playing
+    
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    ball.start_moving()
+                    playing = True
+
+                if event.key == pygame.K_r:
+                    restart()
+                    playing = False
+                
+                if event.key == pygame.K_w:
+                    paddle1.state = 'up'
+                
+                if event.key == pygame.K_s:
+                    paddle1.state = 'down'
+                
+                if event.key == pygame.K_UP:
+                    paddle2.state = 'up'
+
+                if event.key == pygame.K_DOWN:
+                    paddle2.state = 'down'
+
+            if event.type == pygame.KEYUP:
+                paddle1.state = 'stopped'
+                paddle2.state = 'stopped'
+
+        if playing:
+
+            paint_back()
+            
+            # ball movement
+            ball.move()
+            ball.show()
+
+            paddle1.show()
+            paddle1.clamp()
+            paddle1.move()
+
+
+            paddle2.show()
+            paddle2.clamp()
+            paddle2.move()
+
+            # check for collisons
+            if collision.between_ball_and_paddle1(ball, paddle1):
+                ball.paddle_collision()
+
+            if collision.between_ball_and_paddle2(ball, paddle2):
+                ball.paddle_collision()
+
+            if collision.between_ball_and_walls(ball):
+                ball.wall_collision()
+            
+            if collision.check_goal_player1(ball):
+                paint_back()
+                score1.increase()
+                ball.restart_pos()
+                paddle1.restart_pos()
+                paddle2.restart_pos()
                 playing = False
             
-            if event.key == pygame.K_w:
-                paddle1.state = 'up'
-            
-            if event.key == pygame.K_s:
-                paddle1.state = 'down'
-            
-            if event.key == pygame.K_UP:
-                paddle2.state = 'up'
-
-            if event.key == pygame.K_DOWN:
-                paddle2.state = 'down'
-
-        if event.type == pygame.KEYUP:
-            paddle1.state = 'stopped'
-            paddle2.state = 'stopped'
-
-    if playing:
-
-        paint_back()
+            if collision.check_goal_player2(ball):
+                paint_back()
+                score2.increase()
+                ball.restart_pos()
+                paddle1.restart_pos()
+                paddle2.restart_pos()
+                playing = False
         
-        # ball movement
-        ball.move()
-        ball.show()
+        score1.show()
+        score2.show()
 
-        paddle1.show()
-        paddle1.clamp()
-        paddle1.move()
+        pygame.display.update()
 
+        clock.tick(60)  # Set frame rate to 60 frames per second
 
-        paddle2.show()
-        paddle2.clamp()
-        paddle2.move()
+        await asyncio.sleep(0) # -- for web hosting purposes --
 
-        # check for collisons
-        if collision.between_ball_and_paddle1(ball, paddle1):
-            ball.paddle_collision()
-
-        if collision.between_ball_and_paddle2(ball, paddle2):
-            ball.paddle_collision()
-
-        if collision.between_ball_and_walls(ball):
-            ball.wall_collision()
-        
-        if collision.check_goal_player1(ball):
-            paint_back()
-            score1.increase()
-            ball.restart_pos()
-            paddle1.restart_pos()
-            paddle2.restart_pos()
-            playing = False
-        
-        if collision.check_goal_player2(ball):
-            paint_back()
-            score2.increase()
-            ball.restart_pos()
-            paddle1.restart_pos()
-            paddle2.restart_pos()
-            playing = False
-    
-    score1.show()
-    score2.show()
-
-    pygame.display.update()
+# -- for web hosting purposes --
+asyncio.run(main())
